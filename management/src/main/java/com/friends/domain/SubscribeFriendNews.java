@@ -2,6 +2,7 @@ package com.friends.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.Type;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -14,19 +15,21 @@ import javax.persistence.Id;
  * Created by seng kai on 3/18/2017.
  */
 @Entity
-public class Friends implements Serializable {
+public class SubscribeFriendNews implements Serializable {
 
-  private static final long serialVersionUID = 2009639079946007107L;
+  private static final long serialVersionUID = 1513819381743977949L;
   private Long id;
   private String ownerId;
   private String friendId;
+  private boolean isSubscribeOrBlock;
 
-  public Friends() {
+  public SubscribeFriendNews() {
   }
 
-  public Friends(String ownerId, String friendId) {
+  public SubscribeFriendNews(String ownerId, String friendId, boolean isSubscribeOrBlock) {
     this.ownerId = ownerId;
     this.friendId = friendId;
+    this.isSubscribeOrBlock = isSubscribeOrBlock;
   }
 
   @Id
@@ -44,7 +47,7 @@ public class Friends implements Serializable {
     return ownerId;
   }
 
-  public void setOwnerId(String id) {
+  public void setOwnerId(String ownerId) {
     this.ownerId = ownerId;
   }
 
@@ -57,6 +60,16 @@ public class Friends implements Serializable {
     this.friendId = friendId;
   }
 
+  @Column(nullable = false)
+  @Type(type="true_false")
+  public boolean isSubscribeOrBlock() {
+    return isSubscribeOrBlock;
+  }
+
+  public void setSubscribeOrBlock(boolean subscribeOrBlock) {
+    isSubscribeOrBlock = subscribeOrBlock;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -65,15 +78,16 @@ public class Friends implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Friends friends = (Friends) o;
-    return Objects.equals(id, friends.id) &&
-        Objects.equals(ownerId, friends.ownerId) &&
-        Objects.equals(friendId, friends.friendId);
+    SubscribeFriendNews that = (SubscribeFriendNews) o;
+    return isSubscribeOrBlock == that.isSubscribeOrBlock &&
+        Objects.equals(id, that.id) &&
+        Objects.equals(ownerId, that.ownerId) &&
+        Objects.equals(friendId, that.friendId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, ownerId, friendId);
+    return Objects.hash(id, ownerId, friendId, isSubscribeOrBlock);
   }
 
   @Override
@@ -82,6 +96,7 @@ public class Friends implements Serializable {
         .append("id", id)
         .append("ownerId", ownerId)
         .append("friendId", friendId)
+        .append("isSubscribeOrBlock", isSubscribeOrBlock)
         .toString();
   }
 }

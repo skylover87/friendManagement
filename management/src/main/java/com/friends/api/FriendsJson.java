@@ -10,12 +10,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Generated;
 
 /**
  * Created by seng kai on 3/18/2017.
  */
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
     "friends"
 })

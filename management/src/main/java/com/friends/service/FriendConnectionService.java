@@ -1,12 +1,18 @@
 package com.friends.service;
 
 import com.friends.api.FriendsJson;
-import com.friends.api.FriendsRespondJson;
+import com.friends.api.JsonResponse;
+import com.friends.api.SubscriptionJson;
 import com.friends.domain.Friends;
 import com.friends.domain.ProfileAccount;
+import com.friends.domain.SubscribeFriendNews;
 import com.friends.repo.FriendsRepository;
 import com.friends.repo.ProfileAccountRepository;
+import com.friends.repo.SubscribeFriendNewsRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,15 +23,19 @@ import java.util.stream.Collectors;
  */
 @Service
 public class FriendConnectionService implements IFriendConnectionService {
+  private static final Logger logger = LogManager.getLogger(FriendConnectionService.class);
+  @Autowired
+  private MessageSource messageSource;
 
   @Autowired
   private ProfileAccountRepository profileAccountRepository;
-
   @Autowired
   private FriendsRepository friendsRepository;
+  @Autowired
+  private SubscribeFriendNewsRepository subscribeFriendNewsRepository;
 
   @Override
-  public FriendsRespondJson createFriendsConnection(FriendsJson friendsJson) {
+  public JsonResponse createFriendsConnection(FriendsJson friendsJson) {
 
     //Check for any duplicates
     List<String>
@@ -54,23 +64,115 @@ public class FriendConnectionService implements IFriendConnectionService {
       Friends friends = new Friends(listWithoutDuplicates.get(0), listWithoutDuplicates.get(1));
       friendsRepository.save(friends);
 
-      return new FriendsRespondJson.Builder().success(true).build();
+      return new JsonResponse.Builder().success(true).build();
     }
-    return new FriendsRespondJson.Builder().success(false).build();
+    return new JsonResponse.Builder()
+        .statusMessage(messageSource.getMessage("connection.exist", null, null)).success(false)
+        .build();
   }
 
   @Override
-  public FriendsRespondJson getFriendList(String accountId) {
+  public JsonResponse getFriendList(String accountId) {
     List<String> friendList = friendsRepository.getFriendList(accountId);
-    if(friendList.isEmpty()){
-      return new FriendsRespondJson.Builder().success(false).count(0)
+    if (friendList.isEmpty()) {
+      return new JsonResponse.Builder()
+          .statusMessage(messageSource.getMessage("friendList.not.found", null, null))
+          .success(false).count(0)
           .build();
-    }else{
-      return new FriendsRespondJson.Builder()
+    } else {
+      return new JsonResponse.Builder()
           .success(true)
           .friends(friendList)
           .count(friendList.size())
           .build();
     }
+  }
+
+  @Override
+  public JsonResponse getCommonFriendList(FriendsJson friendsJson) {
+    List<String> friendList1 = friendsRepository.getFriendList(friendsJson.getFriends().get(0));
+    List<String> friendList2 = friendsRepository.getFriendList(friendsJson.getFriends().get(1));
+
+    friendList1.retainAll(friendList2);
+
+    if (!friendList1.isEmpty()) {
+      return new JsonResponse.Builder()
+          .success(true)
+          .friends(friendList1)
+          .count(friendList1.size())
+          .build();
+    }
+    return new JsonResponse.Builder()
+        .success(false)
+        .statusMessage(messageSource.getMessage("commonFriendList.not.found", null, null))
+        .build();
+  }
+
+  @Override
+  public JsonResponse subscribeFriendUpdates(SubscriptionJson subscriptionJson) {
+    //check if both has an account
+    ProfileAccount
+        requestorAccount =
+        profileAccountRepository.findOne(subscriptionJson.getRequestor());
+    ProfileAccount targetAccount = profileAccountRepository.findOne(subscriptionJson.getTarget());
+
+    if (requestorAccount != null && targetAccount != null) {
+
+      SubscribeFriendNews
+          subscribeFriendNews = subscribeFriendNewsRepository.isAlreadySubscribeBlock(requestorAccount.getEmailAddress(),
+          targetAccount.getEmailAddress());
+
+      if(subscribeFriendNews == null) {
+        subscribeFriendNews = new SubscribeFriendNews(requestorAccount.getEmailAddress(),
+            targetAccount.getEmailAddress(), true);
+      }
+
+      subscribeFriendNews.setSubscribeOrBlock(true);
+
+      subscribeFriendNewsRepository.save(subscribeFriendNews);
+
+      return new JsonResponse.Builder().success(true).build();
+    }
+    return new JsonResponse.Builder()
+        .success(false)
+        .statusMessage(messageSource.getMessage("subscription.invalid.account.error", null, null))
+        .build();
+  }
+
+  @Override
+  public JsonResponse blockFriendUpdates(SubscriptionJson subscriptionJson) {
+    //check if both has an account
+    ProfileAccount
+        requestorAccount =
+        profileAccountRepository.findOne(subscriptionJson.getRequestor());
+    ProfileAccount targetAccount = profileAccountRepository.findOne(subscriptionJson.getTarget());
+
+    if (requestorAccount != null && targetAccount != null) {
+
+      SubscribeFriendNews
+          subscribeFriendNews = subscribeFriendNewsRepository.isAlreadySubscribeBlock(requestorAccount.getEmailAddress(),
+          targetAccount.getEmailAddress());
+
+      if(subscribeFriendNews != null) {
+        subscribeFriendNews.setSubscribeOrBlock(false);
+
+        subscribeFriendNewsRepository.save(subscribeFriendNews);
+      }
+
+      Friends
+          friends =
+          friendsRepository.isFriendConnectionExist(requestorAccount.getEmailAddress(),
+              targetAccount.getEmailAddress());
+
+      if(friends != null){
+        friendsRepository.delete(friends);
+      }
+
+      return new JsonResponse.Builder().success(true).build();
+    }
+    return new JsonResponse.Builder()
+        .success(false)
+        .statusMessage(messageSource.getMessage("subscription.invalid.account.error", null, null))
+        .build();
   }
 }

@@ -14,6 +14,7 @@ import javax.persistence.Id;
 @Entity
 public class ProfileAccount implements Serializable {
 
+  private static final long serialVersionUID = -2247770723875391267L;
   private String emailAddress;
 
   public ProfileAccount() {

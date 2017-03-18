@@ -10,14 +10,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Generated;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
     "success",
     "friends",
-    "count"
+    "count",
+    "statusMessage"
 })
-public class FriendsRespondJson implements Serializable {
+public class JsonResponse implements Serializable {
 
   private final static long serialVersionUID = 6533355981690220684L;
   @JsonProperty("success")
@@ -26,15 +29,18 @@ public class FriendsRespondJson implements Serializable {
   private List<String> friends = new ArrayList<String>();
   @JsonProperty("count")
   private Integer count;
+  @JsonProperty("statusMessage")
+  private String statusMessage;
 
-  public FriendsRespondJson() {
+  public JsonResponse() {
 
   }
 
-  private FriendsRespondJson(Builder builder) {
+  private JsonResponse(Builder builder) {
     setSuccess(builder.success);
     setFriends(builder.friends);
     setCount(builder.count);
+    setStatusMessage(builder.statusMessage);
   }
 
   @JsonProperty("success")
@@ -67,6 +73,16 @@ public class FriendsRespondJson implements Serializable {
     this.count = count;
   }
 
+  @JsonProperty("statusMessage")
+  public String getStatusMessage() {
+    return statusMessage;
+  }
+
+  @JsonProperty("statusMessage")
+  public void setStatusMessage(String statusMessage) {
+    this.statusMessage = statusMessage;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -75,15 +91,16 @@ public class FriendsRespondJson implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    FriendsRespondJson that = (FriendsRespondJson) o;
+    JsonResponse that = (JsonResponse) o;
     return Objects.equals(success, that.success) &&
         Objects.equals(friends, that.friends) &&
-        Objects.equals(count, that.count);
+        Objects.equals(count, that.count) &&
+        Objects.equals(statusMessage, that.statusMessage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(success, friends, count);
+    return Objects.hash(success, friends, count, statusMessage);
   }
 
   @Override
@@ -92,6 +109,7 @@ public class FriendsRespondJson implements Serializable {
         .append("success", success)
         .append("friends", friends)
         .append("count", count)
+        .append("statusMessage", statusMessage)
         .toString();
   }
 
@@ -100,6 +118,7 @@ public class FriendsRespondJson implements Serializable {
     private Boolean success;
     private List<String> friends;
     private Integer count;
+    private String statusMessage;
 
     public Builder() {
     }
@@ -119,8 +138,13 @@ public class FriendsRespondJson implements Serializable {
       return this;
     }
 
-    public FriendsRespondJson build() {
-      return new FriendsRespondJson(this);
+    public Builder statusMessage(String val){
+      statusMessage = val;
+      return this;
+    }
+
+    public JsonResponse build() {
+      return new JsonResponse(this);
     }
   }
 }
