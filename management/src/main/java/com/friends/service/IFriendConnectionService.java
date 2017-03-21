@@ -1,6 +1,7 @@
 package com.friends.service;
 
 import com.friends.api.FriendsJson;
+import com.friends.api.FriendsNotificationJson;
 import com.friends.api.JsonResponse;
 import com.friends.api.SubscriptionJson;
 
@@ -18,4 +19,6 @@ public interface IFriendConnectionService {
   JsonResponse subscribeFriendUpdates(SubscriptionJson subscriptionJson);
 
   JsonResponse blockFriendUpdates(SubscriptionJson subscriptionJson);
+
+  JsonResponse getAllowNotificationList(FriendsNotificationJson friendsNotificationJson);
 }

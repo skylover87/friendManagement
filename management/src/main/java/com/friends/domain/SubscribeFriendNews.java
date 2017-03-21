@@ -2,7 +2,6 @@ package com.friends.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.Type;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -21,15 +20,15 @@ public class SubscribeFriendNews implements Serializable {
   private Long id;
   private String ownerId;
   private String friendId;
-  private boolean isSubscribeOrBlock;
+  private String subscribeBlock;
 
   public SubscribeFriendNews() {
   }
 
-  public SubscribeFriendNews(String ownerId, String friendId, boolean isSubscribeOrBlock) {
+  public SubscribeFriendNews(String ownerId, String friendId, String subscribeBlock) {
     this.ownerId = ownerId;
     this.friendId = friendId;
-    this.isSubscribeOrBlock = isSubscribeOrBlock;
+    this.subscribeBlock = subscribeBlock;
   }
 
   @Id
@@ -61,13 +60,12 @@ public class SubscribeFriendNews implements Serializable {
   }
 
   @Column(nullable = false)
-  @Type(type="true_false")
-  public boolean isSubscribeOrBlock() {
-    return isSubscribeOrBlock;
+  public String getSubscribeBlock() {
+    return subscribeBlock;
   }
 
-  public void setSubscribeOrBlock(boolean subscribeOrBlock) {
-    isSubscribeOrBlock = subscribeOrBlock;
+  public void setSubscribeBlock(String subscribeBlock) {
+    this.subscribeBlock = subscribeBlock;
   }
 
   @Override
@@ -79,15 +77,15 @@ public class SubscribeFriendNews implements Serializable {
       return false;
     }
     SubscribeFriendNews that = (SubscribeFriendNews) o;
-    return isSubscribeOrBlock == that.isSubscribeOrBlock &&
-        Objects.equals(id, that.id) &&
+    return Objects.equals(id, that.id) &&
         Objects.equals(ownerId, that.ownerId) &&
-        Objects.equals(friendId, that.friendId);
+        Objects.equals(friendId, that.friendId) &&
+        Objects.equals(subscribeBlock, that.subscribeBlock);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, ownerId, friendId, isSubscribeOrBlock);
+    return Objects.hash(id, ownerId, friendId, subscribeBlock);
   }
 
   @Override
@@ -96,7 +94,7 @@ public class SubscribeFriendNews implements Serializable {
         .append("id", id)
         .append("ownerId", ownerId)
         .append("friendId", friendId)
-        .append("isSubscribeOrBlock", isSubscribeOrBlock)
+        .append("subscribeBlock", subscribeBlock)
         .toString();
   }
 }

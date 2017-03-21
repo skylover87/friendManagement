@@ -50,13 +50,19 @@ public class FriendConnectionController {
 
   @RequestMapping(value = "/friends/subscribeToFriend", method = RequestMethod.POST)
   @ResponseBody
-  public JsonResponse subscribeFriendUpdates(SubscriptionJson subscriptionJson){
+  public JsonResponse subscribeFriendUpdates(@Valid @RequestBody SubscriptionJson subscriptionJson){
     return iFriendConnectionService.subscribeFriendUpdates(subscriptionJson);
   }
 
   @RequestMapping(value = "/friends/blockFriendUpdates", method = RequestMethod.POST)
   @ResponseBody
-  public JsonResponse blockFriendUpdates(SubscriptionJson subscriptionJson){
+  public JsonResponse blockFriendUpdates(@Valid @RequestBody SubscriptionJson subscriptionJson){
     return iFriendConnectionService.blockFriendUpdates(subscriptionJson);
+  }
+
+  @RequestMapping(value = "/friends/broadcastUpdatesToFriends", method = RequestMethod.POST)
+  @ResponseBody
+  public JsonResponse broadcastUpdatesToFriends(@Valid @RequestBody FriendsNotificationJson friendsNotificationJson){
+    return iFriendConnectionService.getAllowNotificationList(friendsNotificationJson);
   }
 }

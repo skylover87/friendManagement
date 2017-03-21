@@ -1,6 +1,8 @@
 package com.friends.service;
 
+import com.friends.SubscriptionEnum;
 import com.friends.api.FriendsJson;
+import com.friends.api.FriendsNotificationJson;
 import com.friends.api.JsonResponse;
 import com.friends.api.SubscriptionJson;
 import com.friends.domain.Friends;
@@ -119,15 +121,16 @@ public class FriendConnectionService implements IFriendConnectionService {
     if (requestorAccount != null && targetAccount != null) {
 
       SubscribeFriendNews
-          subscribeFriendNews = subscribeFriendNewsRepository.isAlreadySubscribeBlock(requestorAccount.getEmailAddress(),
-          targetAccount.getEmailAddress());
+          subscribeFriendNews =
+          subscribeFriendNewsRepository.isAlreadySubscribeBlock(requestorAccount.getEmailAddress(),
+              targetAccount.getEmailAddress());
 
-      if(subscribeFriendNews == null) {
+      if (subscribeFriendNews == null) {
         subscribeFriendNews = new SubscribeFriendNews(requestorAccount.getEmailAddress(),
-            targetAccount.getEmailAddress(), true);
+            targetAccount.getEmailAddress(), SubscriptionEnum.SUBSCRIBE.getSubscriptionStatus());
       }
 
-      subscribeFriendNews.setSubscribeOrBlock(true);
+      subscribeFriendNews.setSubscribeBlock(SubscriptionEnum.SUBSCRIBE.getSubscriptionStatus());
 
       subscribeFriendNewsRepository.save(subscribeFriendNews);
 
@@ -150,11 +153,12 @@ public class FriendConnectionService implements IFriendConnectionService {
     if (requestorAccount != null && targetAccount != null) {
 
       SubscribeFriendNews
-          subscribeFriendNews = subscribeFriendNewsRepository.isAlreadySubscribeBlock(requestorAccount.getEmailAddress(),
-          targetAccount.getEmailAddress());
+          subscribeFriendNews =
+          subscribeFriendNewsRepository.isAlreadySubscribeBlock(requestorAccount.getEmailAddress(),
+              targetAccount.getEmailAddress());
 
-      if(subscribeFriendNews != null) {
-        subscribeFriendNews.setSubscribeOrBlock(false);
+      if (subscribeFriendNews != null) {
+        subscribeFriendNews.setSubscribeBlock(SubscriptionEnum.BLOCK.getSubscriptionStatus());
 
         subscribeFriendNewsRepository.save(subscribeFriendNews);
       }
@@ -164,7 +168,7 @@ public class FriendConnectionService implements IFriendConnectionService {
           friendsRepository.isFriendConnectionExist(requestorAccount.getEmailAddress(),
               targetAccount.getEmailAddress());
 
-      if(friends != null){
+      if (friends != null) {
         friendsRepository.delete(friends);
       }
 
@@ -174,5 +178,55 @@ public class FriendConnectionService implements IFriendConnectionService {
         .success(false)
         .statusMessage(messageSource.getMessage("subscription.invalid.account.error", null, null))
         .build();
+  }
+
+  @Override
+  public JsonResponse getAllowNotificationList(FriendsNotificationJson friendsNotificationJson) {
+    //1) Check sender has any account
+    //2) Check if there is any friends connection
+    //3) Check if friends allow updates
+    ProfileAccount
+        profileAccount =
+        profileAccountRepository.findOne(friendsNotificationJson.getSender());
+
+    if (profileAccount != null) {
+      List<String>
+          friendList =
+          friendsRepository.getFriendList(friendsNotificationJson.getSender());
+
+      List<SubscribeFriendNews>
+          blockNotificationFriends =
+          subscribeFriendNewsRepository
+              .friendsWhoSubscribe(friendsNotificationJson.getSender()).stream()
+              .filter(subscribeFriendNews -> subscribeFriendNews.getSubscribeBlock()
+                  .equalsIgnoreCase(SubscriptionEnum.BLOCK.getSubscriptionStatus()))
+              .collect(Collectors.toList());
+
+      List<String>
+          blockNotificationFriendsIds =
+          blockNotificationFriends.stream().map(SubscribeFriendNews::getOwnerId)
+              .collect(Collectors.toList());
+
+      List<String>
+          allowNotificationList =
+          friendList.stream().filter(s -> !blockNotificationFriendsIds.contains(s)).collect(
+              Collectors.toList());
+
+      if(allowNotificationList != null && !allowNotificationList.isEmpty()){
+        return new JsonResponse.Builder()
+            .success(true)
+            .recipients(allowNotificationList.stream().distinct().collect(Collectors.toList()))
+            .build();
+      }
+      return new JsonResponse.Builder()
+          .success(false)
+          .statusMessage(messageSource.getMessage("notification.allow.list.not.found", null, null))
+          .build();
+    }
+    return new JsonResponse.Builder()
+        .success(false)
+        .statusMessage(messageSource.getMessage("profile.account.not.found", null, null))
+        .build();
+
   }
 }

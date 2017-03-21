@@ -27,6 +27,8 @@ public class JsonResponse implements Serializable {
   private Boolean success;
   @JsonProperty("friends")
   private List<String> friends = new ArrayList<String>();
+  @JsonProperty("recipients")
+  private List<String> recipients = new ArrayList<String>();
   @JsonProperty("count")
   private Integer count;
   @JsonProperty("statusMessage")
@@ -39,6 +41,7 @@ public class JsonResponse implements Serializable {
   private JsonResponse(Builder builder) {
     setSuccess(builder.success);
     setFriends(builder.friends);
+    setRecipients(builder.recipients);
     setCount(builder.count);
     setStatusMessage(builder.statusMessage);
   }
@@ -61,6 +64,16 @@ public class JsonResponse implements Serializable {
   @JsonProperty("friends")
   public void setFriends(List<String> friends) {
     this.friends = friends;
+  }
+
+  @JsonProperty("recipients")
+  public List<String> getRecipients() {
+    return recipients;
+  }
+
+  @JsonProperty("recipients")
+  public void setRecipients(List<String> recipients) {
+    this.recipients = recipients;
   }
 
   @JsonProperty("count")
@@ -94,13 +107,14 @@ public class JsonResponse implements Serializable {
     JsonResponse that = (JsonResponse) o;
     return Objects.equals(success, that.success) &&
         Objects.equals(friends, that.friends) &&
+        Objects.equals(recipients, that.recipients) &&
         Objects.equals(count, that.count) &&
         Objects.equals(statusMessage, that.statusMessage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(success, friends, count, statusMessage);
+    return Objects.hash(success, friends, recipients, count, statusMessage);
   }
 
   @Override
@@ -108,6 +122,7 @@ public class JsonResponse implements Serializable {
     return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
         .append("success", success)
         .append("friends", friends)
+        .append("recipients", recipients)
         .append("count", count)
         .append("statusMessage", statusMessage)
         .toString();
@@ -117,6 +132,7 @@ public class JsonResponse implements Serializable {
   public static final class Builder {
     private Boolean success;
     private List<String> friends;
+    private List<String> recipients;
     private Integer count;
     private String statusMessage;
 
@@ -130,6 +146,11 @@ public class JsonResponse implements Serializable {
 
     public Builder friends(List<String> val) {
       friends = val;
+      return this;
+    }
+
+    public Builder recipients(List<String> val) {
+      recipients = val;
       return this;
     }
 

@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.friends.api.FriendsJson;
+import com.friends.api.FriendsNotificationJson;
 import com.friends.api.JsonResponse;
 import com.friends.api.SubscriptionJson;
+import com.friends.repo.SubscribeFriendNewsRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
@@ -31,6 +33,9 @@ public class FriendConnectionServiceTest {
 
   @Autowired
   IFriendConnectionService iFriendConnectionService;
+
+  @Autowired
+  SubscribeFriendNewsRepository subscribeFriendNewsRepository;
 
   @Autowired
   ObjectMapper objectMapper;
@@ -152,7 +157,8 @@ public class FriendConnectionServiceTest {
 
     SubscriptionJson
         subscriptionJson =
-        new SubscriptionJson.Builder().requestor("unknown@example.com").target("jm@example.com").build();
+        new SubscriptionJson.Builder().requestor("unknown@example.com").target("jm@example.com")
+            .build();
 
     JsonResponse
         jsonResponse =
@@ -198,7 +204,8 @@ public class FriendConnectionServiceTest {
 
     SubscriptionJson
         subscriptionJson =
-        new SubscriptionJson.Builder().requestor("unknown@example.com").target("jm@example.com").build();
+        new SubscriptionJson.Builder().requestor("unknown@example.com").target("jm@example.com")
+            .build();
 
     JsonResponse
         jsonResponse =
@@ -207,6 +214,30 @@ public class FriendConnectionServiceTest {
 
     assertThat(jsonResponse.getSuccess()).isFalse();
     assertThat(jsonResponse.getStatusMessage()).contains("Invalid Account found.");
+
+    String jsonMapperOutput =
+        objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonResponse);
+    logger.info("Print out Json :: " + jsonMapperOutput);
+
+    assertThat(jsonMapperOutput).isNotNull();
+  }
+
+  @Test
+  @Sql("/service/friendNotificationUpdates.sql")
+  public void friendNotificationUpdates() throws Exception {
+
+    FriendsNotificationJson
+        friendsNotificationJson =
+        new FriendsNotificationJson.Builder().sender("sk@example.com").text("Hello World! ")
+            .build();
+
+    JsonResponse
+        jsonResponse =
+        iFriendConnectionService
+            .getAllowNotificationList(friendsNotificationJson);
+
+    assertThat(jsonResponse.getSuccess()).isTrue();
+    assertThat(jsonResponse.getRecipients()).hasSize(3);
 
     String jsonMapperOutput =
         objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonResponse);
