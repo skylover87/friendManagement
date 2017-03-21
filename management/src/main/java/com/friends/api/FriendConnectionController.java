@@ -29,7 +29,6 @@ public class FriendConnectionController {
   public FriendConnectionController(MessageSource messageSource) {
     this.messageSource = messageSource;
   }
-  
 
   @RequestMapping(value = "/friends/createConnection", method = RequestMethod.POST)
   @ResponseBody
@@ -47,5 +46,17 @@ public class FriendConnectionController {
   @ResponseBody
   public JsonResponse findCommonFriend(@Valid @RequestBody FriendsJson friendsJson){
     return iFriendConnectionService.getCommonFriendList(friendsJson);
+  }
+
+  @RequestMapping(value = "/friends/subscribeToFriend", method = RequestMethod.POST)
+  @ResponseBody
+  public JsonResponse subscribeFriendUpdates(SubscriptionJson subscriptionJson){
+    return iFriendConnectionService.subscribeFriendUpdates(subscriptionJson);
+  }
+
+  @RequestMapping(value = "/friends/blockFriendUpdates", method = RequestMethod.POST)
+  @ResponseBody
+  public JsonResponse blockFriendUpdates(SubscriptionJson subscriptionJson){
+    return iFriendConnectionService.blockFriendUpdates(subscriptionJson);
   }
 }
