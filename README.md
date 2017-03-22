@@ -38,10 +38,10 @@ API will response with the following message: "Already have existing friend conn
 ```
 The API should receive the following JSON request:
 {
-  friends:
+  "friends":
     [
-      'andy@example.com',
-      'john@example.com'
+      "sk@example.com",
+      "jm@example.com"
     ]
 }
 ```
@@ -53,7 +53,7 @@ API will response with the following message: "No Friend List found."
 ```
 The API should receive the following JSON request:
 {
-  email: 'andy@example.com'
+  "email": "sk@example.com"
 }
 ```
 
@@ -64,10 +64,10 @@ API will response with the following message: "No Common Friend List found."
 ```
 The API should receive the following JSON request:
 {
-  friends:
+  "friends":
     [
-      'andy@example.com',
-      'john@example.com'
+      "jm@example.com",
+      "sk@example.com"
     ]
 }
 ```
@@ -79,8 +79,8 @@ API will response with the following message: "Invalid Account found."
 ```
 The API should receive the following JSON request:
 {
-  "requestor": "lisa@example.com",
-  "target": "john@example.com"
+  "requestor": "jm@example.com",
+  "target": "sk@example.com"
 }
 ```
 
@@ -92,8 +92,8 @@ API will response with the following message: "Invalid Account found."
 ```
 The API should receive the following JSON request:
 {
-  "requestor": "andy@example.com",
-  "target": "john@example.com"
+  "requestor": "cy@example.com",
+  "target": "sk@example.com"
 }
 ```
 
@@ -104,7 +104,7 @@ API will response with the following message: "Invalid Account found."
 ```
 The API should receive the following JSON request:
 {
-  "sender":  "john@example.com",
-  "text": "Hello World! kate@example.com"
+  "sender":  "sk@example.com",
+  "text": "Hello World! All my Friends"
 }
 ```
