@@ -15,10 +15,6 @@ public interface SubscribeFriendNewsRepository extends CrudRepository<SubscribeF
   @Query("select f from SubscribeFriendNews f where f.ownerId = :ownerId and f.friendId = :friendId ")
   SubscribeFriendNews isAlreadySubscribeBlock(@Param("ownerId") String ownerId, @Param("friendId") String friendId);
 
-  @Query("select f.ownerId from SubscribeFriendNews f where f.friendId = :friendId and f.subscribeBlock = :subscribeBlock ")
-  List<String> friendsWhoSubscribe(@Param("friendId") String friendId,
-                                   @Param("subscribeBlock") String subscribeBlock);
-
   @Query("select f from SubscribeFriendNews f where f.friendId = :friendId ")
   List<SubscribeFriendNews> friendsWhoSubscribe(@Param("friendId") String friendId);
 }

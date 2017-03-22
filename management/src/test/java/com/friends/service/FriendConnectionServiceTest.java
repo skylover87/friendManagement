@@ -63,7 +63,7 @@ public class FriendConnectionServiceTest {
 
     JsonResponse
         jsonResponse =
-        iFriendConnectionService.getFriendList("sk@example.com");
+        iFriendConnectionService.getFriendList("sk999@example.com");
 
     assertThat(jsonResponse.getFriends()).isNull();
     assertThat(jsonResponse.getSuccess()).isFalse();

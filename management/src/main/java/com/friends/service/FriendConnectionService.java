@@ -161,16 +161,12 @@ public class FriendConnectionService implements IFriendConnectionService {
         subscribeFriendNews.setSubscribeBlock(SubscriptionEnum.BLOCK.getSubscriptionStatus());
 
         subscribeFriendNewsRepository.save(subscribeFriendNews);
+      }else{
+        subscribeFriendNews = new SubscribeFriendNews(subscriptionJson.getRequestor(), subscriptionJson.getTarget(),
+            SubscriptionEnum.BLOCK.getSubscriptionStatus());
       }
 
-      Friends
-          friends =
-          friendsRepository.isFriendConnectionExist(requestorAccount.getEmailAddress(),
-              targetAccount.getEmailAddress());
-
-      if (friends != null) {
-        friendsRepository.delete(friends);
-      }
+      subscribeFriendNewsRepository.save(subscribeFriendNews);
 
       return new JsonResponse.Builder().success(true).build();
     }
