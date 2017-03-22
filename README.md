@@ -8,8 +8,8 @@ Usually, applications would start with features like "Friend", "Unfriend", "Bloc
 2. Maven (https://maven.apache.org/install.html) :: Optional
 
 #### Instruction to run docker
-* For windows user, open up (e.g. cmd, powershell etc.) whichever you have and type "docker run skylover/friendmanagement"
-* Open up any rest clients that you have and type in the following links: (http://localhost:8080)
+* For windows user, open up (e.g. cmd, powershell etc.) whichever you have and type "docker run -p 8090:8080 skylover/friendmanagement"
+* Open up any rest clients that you have and type in the following links: (http://localhost:8090)
 * Your rest client should show you the following response as follows:
 ```
  {
@@ -32,7 +32,7 @@ Usually, applications would start with features like "Friend", "Unfriend", "Bloc
 
 #### User Stories
 **1. As a user, I need an API to create a friend connection between two email addresses.**
-* This is a POST request with the following context path (http://localhost:8080/friends/createConnection)
+* This is a POST request with the following context path (http://localhost:8090/friends/createConnection)
 * If there is already a connection between the two friends. 
 API will response with the following message: "Already have existing friend connection found."
 ```
@@ -47,7 +47,7 @@ The API should receive the following JSON request:
 ```
 
 **2. As a user, I need an API to retrieve the friends list for an email address.**
-* This is a POST request with the following context path (http://localhost:8080/friends/findFriend)
+* This is a POST request with the following context path (http://localhost:8090/friends/findFriend)
 * If there is no friends found. 
 API will response with the following message: "No Friend List found."
 ```
@@ -58,7 +58,7 @@ The API should receive the following JSON request:
 ```
 
 **3. As a user, I need an API to retrieve the common friends list between two email addresses.**
-* This is a POST request with the following context path (http://localhost:8080/friends/commonFriend)
+* This is a POST request with the following context path (http://localhost:8090/friends/commonFriend)
 * If there is no common friends found. 
 API will response with the following message: "No Common Friend List found."
 ```
@@ -73,7 +73,7 @@ The API should receive the following JSON request:
 ```
 
 **4. As a user, I need an API to subscribe to updates for an email address.**
-* This is a POST request with the following context path (http://localhost:8080/friends/subscribeToFriend)
+* This is a POST request with the following context path (http://localhost:8090/friends/subscribeToFriend)
 * Subscription will fail if any of the email account details cannot be found.
 API will response with the following message: "Invalid Account found."
 ```
@@ -86,7 +86,7 @@ The API should receive the following JSON request:
 
 
 **5. As a user, I need an API to block updates for an email address.**
-* This is a POST request with the following context path (http://localhost:8080/friends/blockFriendUpdates)
+* This is a POST request with the following context path (http://localhost:8090/friends/blockFriendUpdates)
 * Block friend update will fail if any of the email account details cannot be found.
 API will response with the following message: "Invalid Account found."
 ```
@@ -98,7 +98,7 @@ The API should receive the following JSON request:
 ```
 
 **6. As a user, I need an API to retrieve all email addresses that can receive updates for an email address.**
-* This is a POST request with the following context path (http://localhost:8080/friends/broadcastUpdatesToFriends)
+* This is a POST request with the following context path (http://localhost:8090/friends/broadcastUpdatesToFriends)
 * Block friend update will fail if any of the email account details cannot be found.
 API will response with the following message: "Invalid Account found."
 ```
