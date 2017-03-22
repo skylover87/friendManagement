@@ -92,7 +92,7 @@
                 <version>0.4.13</version>
                 <configuration>
                     <skipDocker>false</skipDocker>
-                    <imageName>skylover/${build.finalName}</imageName>
+                    <imageName>skylover/${project.build.finalName}</imageName>
                     <dockerDirectory>src/main/docker</dockerDirectory>
                     <resources>
                         <resource>
